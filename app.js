@@ -1,11 +1,15 @@
 //jshint esversion:6
+const dotenv = require("dotenv");
+dotenv.config();
+
 const express = require("express");
 const ejs = require("ejs");
 const bodyParser = require("body-parser");
-const dotenv = require("dotenv");
+
 const mongoose = require("mongoose");
 const encryption = require("mongoose-encryption");
-dotenv.config();
+
+
 
 
 
@@ -17,15 +21,14 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 app.set(`view engine`, `ejs`);
 
-mongoose.connect(process.env.MONGO_URL);
+mongoose.connect(process.env.MONGO_URL, {useNewUrlParser: true}, { useUnifiedTopology: true });
 
 const userDbSchema = new mongoose.Schema({
    email: String,
    password: String,
 });
 
-const secret = "somelongstringidontcareabout";
-userDbSchema.plugin(encryption, {secret: secret, encryptedFields: ["password"]});
+userDbSchema.plugin(encryption, {secret: process.env.PSWD_ENCRYPT_STRING, encryptedFields: ["password"]});
 
 const User = mongoose.model("User", userDbSchema);
 
